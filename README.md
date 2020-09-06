@@ -90,6 +90,8 @@ The following commands can be entered on the pool server's console
 * `epoch` _epoch_   
   The decimal number of the epoch the pool will ask miners to mine in
   (the miners are not told the exact block number).
+  To make miners that have already obtained a job from the pool switch to
+  the new epoch, use the `job` command after `epoch`.
 * `help`   
   In case you get lost.
 * `job`   
@@ -108,17 +110,20 @@ The console is left by sending an EOF.
 
 The following options are accepted:
 
-* `-d=`_bits_ or `--difficulty=`_bits_   
+* `-d` _bits_ or `--difficulty=`_bits_   
   Set the difficulty, like with the `diff` command.
 * `-c` or `--cache`   
   Enables caching of the cache data. Since computation of the cache is rather
   slow in Python, the cache can optionally be stored in a file. This file is
   named _epoch_`.cache` (Note: for ECIP-1043 support, we will also need to add
   the frozen epoch number.)
-* `-e=`_epoch_ or `--epoch=`_epoch_   
+* `-e` _epoch_ or `--epoch=`_epoch_   
   Set up the indicated epoch before starting to accept commands or connections.
 * `--ecip1043=`_activation_`,`_fixed_   
   The ECIP-1043 epochs, like in ethash_ecip1043.py
+* `-q` or `--quick`   
+  Quick mode: don't load or generate the cache, accept all submissions.
+  This is intended for DAG size testing.
 * `-v` or `--verbose`   
   Be a bit more chatty.
 

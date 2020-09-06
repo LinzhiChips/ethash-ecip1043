@@ -25,6 +25,9 @@ caching = False
 # Verbose
 verbose = False
 
+# Quick mode - don't generate a cache and don't verify submissions
+quick = False
+
 # List of client connections ("handlers")
 clients = []
 
@@ -68,15 +71,20 @@ def epoch(n):
 	block = curr_epoch * EPOCH_LENGTH
 	curr_seed = get_seedhash(block)
 	key = str(n)
-	if key not in cache_cache:
-		cache_cache[key] = compute_cache(n, block)
-	curr_cache = cache_cache[key]
+	if not quick:
+		if key not in cache_cache:
+			cache_cache[key] = compute_cache(n, block)
+		curr_cache = cache_cache[key]
 
 
 def submit(hdr, nonce, miner_cmix = None):
 	if curr_epoch is None:
 		print >>sys.stderr, "please set epoch first"
-		return
+		return False
+	if quick:
+		if verbose:
+			print >>sys.stderr, "ACCEPTED (quick mode)"
+		return True
 	tmp = encode_int(int(hdr, base = 16))[::-1]
 	tmp = '\x00' * (32 - len(tmp)) + tmp
 	block = curr_epoch * EPOCH_LENGTH
@@ -236,12 +244,15 @@ parser.add_argument("-c", "--cache", action = "store_true",
 parser.add_argument("-e", "--epoch", type = int, help = "epoch number")
 parser.add_argument("--ecip1043", metavar = "ACTIVATION,FIXED",
     help = "ECIP-1043 activation and fixed epoch")
+parser.add_argument("-q", "--quick", action = "store_true",
+    help = "don't verify submissions")
 parser.add_argument("-v", "--verbose", action = "store_true",
     help = "verbose operation")
 parser.add_argument("port", type = int, help = "start server on port number")
 args = parser.parse_args()
 
 caching = args.cache
+quick = args.quick
 verbose = args.verbose
 
 if args.difficulty is not None:
