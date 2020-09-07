@@ -70,8 +70,8 @@ def epoch(n):
 	curr_epoch = n
 	block = curr_epoch * EPOCH_LENGTH
 	curr_seed = get_seedhash(block)
-	key = str(n)
 	if not quick:
+		key = str(n)
 		if key not in cache_cache:
 			cache_cache[key] = compute_cache(n, block)
 		curr_cache = cache_cache[key]
@@ -172,7 +172,9 @@ def process(j):
 		    None
 	else:
 		print >>sys.stderr, "unrecognized", j
-		return None, None
+		return { "id": j["id"], "jsonrpc": "2.0", "result": None,
+		    "error": { "code": -3, "message": "Method not found" }}, \
+		    None
 
 
 class Handler(socketserver.StreamRequestHandler):
