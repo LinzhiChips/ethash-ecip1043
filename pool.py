@@ -2,7 +2,7 @@
 
 from ethash_ecip1043 import *
 import math, sys, os
-import readline, random
+import readline, random, re
 import threading, json, argparse, pickle
 # renamed in Python 3
 import SocketServer as socketserver
@@ -250,7 +250,8 @@ parser.add_argument("-q", "--quick", action = "store_true",
     help = "don't verify submissions")
 parser.add_argument("-v", "--verbose", action = "store_true",
     help = "verbose operation")
-parser.add_argument("port", type = int, help = "start server on port number")
+parser.add_argument("port", type = int, nargs = "?",
+    help = "start server on port number")
 args = parser.parse_args()
 
 caching = args.cache
@@ -275,7 +276,7 @@ while True:
 	except EOFError:
 		print
 		sys.exit(0)
-	a = line.split(" ")
+	a = re.compile("\s+").split(line)
 	try:
 		if a[0] == "":
 			continue
