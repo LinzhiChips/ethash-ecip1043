@@ -260,11 +260,11 @@ verbose = args.verbose
 
 if args.difficulty is not None:
 	difficulty = args.difficulty
-if args.epoch is not None:
-	epoch(args.epoch)
 if args.ecip1043 is not None:
 	activation, fixed = map(lambda x: int(x), args.ecip1043.split(","))
 	ecip1043(activation, fixed)
+if args.epoch is not None:
+	epoch(args.epoch)
 
 if args.port is not None:
 	start(args.port)
