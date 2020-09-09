@@ -13,8 +13,8 @@ This repository contains
   [Ethereum JSON-RPC API](https://eth.wiki/json-rpc/API)
   and that can be used for testing miner implementations
 
-The Web server is still work in progress and doesn't properly support
-ECIP-1043 yet.
+The Web server is still work in progress and ECIP-1043 support is only
+very lightly tested.
 
 
 ethash.py
@@ -136,7 +136,7 @@ There is one optional argument:
 
 ### Development status
 
-Very lightly tested. ECIP-1043 mode of the pool server has not been tried yet.
+Very lightly tested.
 
 
 ### Example invocation

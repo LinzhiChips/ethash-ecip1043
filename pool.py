@@ -16,6 +16,11 @@ curr_epoch = None
 curr_seed = None
 curr_cache = None
 
+# ECIP-1043 settings (we need a local shadow copy since ecip1043_*_epoch are
+# value copies, not references)
+ecip1043_activation = ecip1043_activation_epoch
+ecip1043_fixed = ecip1043_fixed_epoch
+
 # Current difficulty (default to 24 bits)
 difficulty = 24
 
@@ -32,13 +37,16 @@ quick = False
 clients = []
 
 
-
 # ----- Ethash operations -----------------------------------------------------
 
 
 def compute_cache(epoch, block):
+	if epoch < ecip1043_activation:
+		id = str(epoch)
+	else:
+		id = str(epoch) + "-" + str(ecip1043_fixed)
 	if caching:
-		name = str(epoch) + ".cache"
+		name = id + ".cache"
 		try:
 			with open(name, "rb") as f:
 				print >>sys.stderr, "loading", name
@@ -48,7 +56,7 @@ def compute_cache(epoch, block):
 			print >>sys.stderr, "calculating epoch", \
 			    epoch, "cache ..."
 			cache = mkcache(get_cache_size(block), curr_seed)
-			tmp = str(epoch) + ".tmp"
+			tmp = id + ".tmp"
 			print >>sys.stderr, "saving", tmp
 			try:
 				with open(tmp, "wb") as f:
@@ -71,7 +79,10 @@ def epoch(n):
 	block = curr_epoch * EPOCH_LENGTH
 	curr_seed = get_seedhash(block)
 	if not quick:
-		key = str(n)
+		if n < ecip1043_activation:
+			key = str(n)
+		else:
+			key = str(n) + "-" + str(ecip1043_fixed)
 		if key not in cache_cache:
 			cache_cache[key] = compute_cache(n, block)
 		curr_cache = cache_cache[key]
@@ -263,6 +274,7 @@ if args.difficulty is not None:
 if args.ecip1043 is not None:
 	activation, fixed = map(lambda x: int(x), args.ecip1043.split(","))
 	ecip1043(activation, fixed)
+	ecip1043_activation, ecip1043_fixed = activation, fixed
 if args.epoch is not None:
 	epoch(args.epoch)
 
@@ -285,8 +297,11 @@ while True:
 		elif a[0] == "ecip1043":
 			if len(a) == 1:
 				ecip1043(700000, 0)
+				ecip1043_activation, ecip1043_fixed = 700000, 0
 			else:
 				ecip1043(int(a[1]), int(a[2]))
+				ecip1043_activation, ecip1043_fixed = \
+				    int(a[1]), int(a[2])
 		elif a[0] == "epoch":
 			epoch(int(a[1]))
 		elif a[0] == "help":
