@@ -1,7 +1,8 @@
 #!/usr/bin/python2.7
 
 #
-# https://github.com/ethereum/wiki/wiki/Ethash
+# https://eth.wiki/en/concepts/ethash/ethash
+# https://ecips.ethereumclassic.org/ECIPs/ecip-1043
 #
 # This one points out some issues, but gets several things wrong, too:
 # https://github.com/lukovkin/ethash
