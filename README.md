@@ -24,8 +24,8 @@ ethash.py is a slightly cleaned up version of the Ethash reference
 implementation. It has been tested with data obtained from real-life
 ETH/ETC mining.
 
-ethash.py can be used as a library or it can be invoked as a program.
-In the latter case, it accepts the following three arguments:
+run-ethash.py is a program that hashes using ethash.py.
+It accepts the following three arguments:
 * the decimal epoch number
 * the hexadecimal header hash, as a very long integer beginning with 0x
 * the hexadecimal nonce, also beginning with 0x
@@ -40,7 +40,7 @@ difficulty target.
 
 Example run:
 ```
-./ethash.py 359 0x667c94657d5b6922693e2e6ac77b80861b80ff949c795ef4b18551e8c389a2f1 0x710a38013066d8ce
+./run-ethash.py 359 0x667c94657d5b6922693e2e6ac77b80861b80ff949c795ef4b18551e8c389a2f1 0x710a38013066d8ce
 seed c1dbf14bc84f90759c7c94280874014180ae6af9d9768eda2fc1b7c2725c85f4
 cmix f4eda3ca5e96f93fc4e13695461a2c032c430259fb9b00461a0b390b97a6a0d3
 res  00000000fed70aa5ab78624bf7500e847d200fa1e88e1103fca12724fb5b35bb
@@ -55,13 +55,13 @@ Like ethash.py, but has two additional variables:
   is frozen, as defined in ECIP-1043
 * `ecip1043_fixed_epoch` is the epoch to whose size the DAG size is set
 
-If invoking ethash_ecip1043.py as a program, these variables can be set
+When invoking the run-ecip1043.py program, these variables can be set
 with the command-line option
 `--ecip1043`=_activation_epoch_`,`_fixed_epoch_
 
 Example run:
 ```
-./ethash_ecip1043.py --ecip1043=350,64 359 0x667c94657d5b6922693e2e6ac77b80861b80ff949c795ef4b18551e8c389a2f1 0x710a38013066d8ce
+./run-ecip1043.py --ecip1043=350,64 359 0x667c94657d5b6922693e2e6ac77b80861b80ff949c795ef4b18551e8c389a2f1 0x710a38013066d8ce
 seed c1dbf14bc84f90759c7c94280874014180ae6af9d9768eda2fc1b7c2725c85f4
 cmix b00e8f2de5907690031516ecf0c909de92e0d92a8661921a169781d273836f19
 res  69276d0c9aef70f8bfc985e2c7d7cb5c639b0939c5a18aeecf0d0e46ceea212e

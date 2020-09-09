@@ -263,8 +263,8 @@ if args.difficulty is not None:
 if args.epoch is not None:
 	epoch(args.epoch)
 if args.ecip1043 is not None:
-	ecip1043_activation_epoch, ecip1043_fixed_epoch = \
-	    map(lambda x: int(x), args.ecip1043.split(","))
+	activation, fixed = map(lambda x: int(x), args.ecip1043.split(","))
+	ecip1043(activation, fixed)
 
 if args.port is not None:
 	start(args.port)
@@ -284,10 +284,9 @@ while True:
 			difficulty = int(a[1])
 		elif a[0] == "ecip1043":
 			if len(a) == 1:
-				ecip1043_activation_epoch = 700000
+				ecip1043(700000, 0)
 			else:
-				ecip1043_activation_epoch = int(a[1]) 
-				ecip1043_fixed_epoch = int(a[2]) 
+				ecip1043(int(a[1]), int(a[2]))
 		elif a[0] == "epoch":
 			epoch(int(a[1]))
 		elif a[0] == "help":
