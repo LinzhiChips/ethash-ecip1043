@@ -125,23 +125,27 @@ def submit(hdr, nonce, miner_cmix = None):
 
 
 def job(hdr = None):
+	global lock
+
 	if hdr is None:
 		hdr = random.getrandbits(256)
-	for c in range(len(clients)):
-		handler = clients[c]
-		if handler.getwork_id is not None:
-			res = { "id": handler.getwork_id,
-			    "jsonrpc": "2.0", "result": [ "0x%064x" % hdr,
-			    "0x%064x" % decode_int(curr_seed[::-1]),
-			    "0x%064x" % ((2 ** 256 - 1) /
-			    math.pow(2, difficulty)) ]}
-			s = json.dumps(res)
-			print ">", s
-			try:
-				# @@@ this is racy
-				handler.request.sendall(s + "\n")
-			except:
-				pass
+	with lock:
+		for c in range(len(clients)):
+			handler = clients[c]
+			if handler.getwork_id is not None:
+				res = { "id": handler.getwork_id,
+				    "jsonrpc": "2.0",
+				    "result": [ "0x%064x" % hdr,
+				    "0x%064x" % decode_int(curr_seed[::-1]),
+				    "0x%064x" % ((2 ** 256 - 1) /
+				    math.pow(2, difficulty)) ]}
+				s = json.dumps(res)
+				print ">", s
+				try:
+					# @@@ this is racy
+					handler.request.sendall(s + "\n")
+				except:
+					pass
 
 
 # ----- Networking ------------------------------------------------------------
@@ -190,7 +194,10 @@ def process(j):
 
 class Handler(socketserver.StreamRequestHandler):
 	def handle(self):
-		clients.append(self)
+		global lock
+
+		with lock:
+			clients.append(self)
 		self.getwork_id = None
 		while True:
 			req = self.rfile.readline().strip()
@@ -207,7 +214,11 @@ class Handler(socketserver.StreamRequestHandler):
 					self.request.sendall(s + "\n")
 				except:
 					break
-		# @@@ should clean up
+		with lock:
+			for i in range(len(clients)):
+				if clients[i] is self:
+					del clients[i]
+					break
 
 
 class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
@@ -280,6 +291,8 @@ if args.epoch is not None:
 
 if args.port is not None:
 	start(args.port)
+
+lock = threading.Lock()
 
 while True:
 	try:
