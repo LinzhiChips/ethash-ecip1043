@@ -298,7 +298,7 @@ while True:
 	try:
 		line = raw_input(("" if curr_epoch is None
 		    else str(curr_epoch)) + "> ")
-	except EOFError:
+	except (EOFError, KeyboardInterrupt):
 		print
 		sys.exit(0)
 	a = re.compile("\s+").split(line)
@@ -330,5 +330,7 @@ while True:
 			submit(a[1], a[2])
 		else:
 			raise Exception
-	except EOFError:
+	except KeyboardInterrupt:
+		break
+	except:
 		print 'try "help" for help'
